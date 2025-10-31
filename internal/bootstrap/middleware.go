@@ -28,7 +28,8 @@ func (c *Container) setupMiddlewares() error {
 	appLogger.Debug(context.Background(), "结构化日志中间件已初始化")
 
 	// 2. 增强恢复中间件
-	middlewares = append(middlewares, middleware.RecoveryMiddleware())
+	recoveryLogger := c.Logger.GetLogger("recovery")
+	middlewares = append(middlewares, middleware.RecoveryMiddleware(recoveryLogger))
 	appLogger.Debug(context.Background(), "增强恢复中间件已初始化")
 
 	// 3. CORS中间件

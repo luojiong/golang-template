@@ -32,7 +32,7 @@ func (s *DomainService) RegisterUser(
 		return nil, customerrors.NewDatabaseError("failed to check email existence", err)
 	}
 	if exists {
-		return nil, customerrors.NewConflictError("email already registered").WithDetails(map[string]interface{}{
+		return nil, customerrors.NewConflictError("email already registered", map[string]interface{}{
 			"field": "email",
 			"value": email.String(),
 		})
@@ -44,7 +44,7 @@ func (s *DomainService) RegisterUser(
 		return nil, customerrors.NewDatabaseError("failed to check username existence", err)
 	}
 	if exists {
-		return nil, customerrors.NewConflictError("username already taken").WithDetails(map[string]interface{}{
+		return nil, customerrors.NewConflictError("username already taken", map[string]interface{}{
 			"field": "username",
 			"value": username.String(),
 		})
@@ -116,7 +116,7 @@ func (s *DomainService) ChangeUserPassword(userID UserID, oldPassword, newPasswo
 	// 查找用户
 	user, err := s.repo.FindByID(userID)
 	if err != nil {
-		return customerrors.NewNotFoundError("user")
+		return customerrors.NewNotFoundError("user", userID.String())
 	}
 
 	// 验证旧密码

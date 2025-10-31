@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"go-server/internal/config"
 	"go-server/internal/domain/user"
 	"go-server/internal/errors"
+	"go-server/internal/logger"
+	"go-server/internal/middleware"
 	"go-server/internal/models"
 	"go-server/internal/services"
 	"go-server/internal/validation"
@@ -18,14 +21,22 @@ import (
 // UserHandlerV2 改进的用户处理器
 type UserHandlerV2 struct {
 	userService  services.UserServiceV2
-	errorHandler errors.ErrorHandler
+	errorHandler *middleware.ErrorHandler
 }
 
 // NewUserHandlerV2 创建改进的用户处理器
 func NewUserHandlerV2(userService services.UserServiceV2) *UserHandlerV2 {
+	// 创建logger
+	logConfig := config.LoggingConfig{
+		Level:  "info",
+		Format: "json",
+	}
+	logMgr, _ := logger.NewManager(logConfig)
+	baseLogger := logMgr.GetLogger("user_handler")
+
 	return &UserHandlerV2{
 		userService:  userService,
-		errorHandler: errors.NewErrorHandler(),
+		errorHandler: middleware.NewErrorHandler(baseLogger),
 	}
 }
 

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"regexp"
 	"time"
 
 	"gorm.io/gorm"
@@ -66,6 +67,52 @@ func (u *User) ToSafeUser() SafeUser {
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
 	}
+}
+
+// Validate 验证用户数据的完整性
+func (u *User) Validate() error {
+	// 验证邮箱格式
+	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+	if !emailRegex.MatchString(u.Email) {
+		return &ValidationError{
+			Field:   "email",
+			Message: "邮箱格式无效",
+		}
+	}
+
+	// 验证用户名长度
+	if len(u.Username) < 3 || len(u.Username) > 50 {
+		return &ValidationError{
+			Field:   "username",
+			Message: "用户名长度必须在3-50个字符之间",
+		}
+	}
+
+	return nil
+}
+
+// IsActiveUser 检查用户是否处于活跃状态
+func (u *User) IsActiveUser() bool {
+	return u.IsActive
+}
+
+// GetRoles 返回用户角色列表
+func (u *User) GetRoles() []string {
+	roles := []string{"user"}
+	if u.IsAdmin {
+		roles = append(roles, "admin")
+	}
+	return roles
+}
+
+// ValidationError 验证错误类型
+type ValidationError struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
+func (e *ValidationError) Error() string {
+	return e.Message
 }
 
 // SafeUser 不包含敏感信息的用户对象

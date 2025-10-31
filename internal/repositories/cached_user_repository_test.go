@@ -8,6 +8,7 @@ import (
 
 	"go-server/internal/config"
 	"go-server/internal/database"
+	"go-server/internal/logger"
 	"go-server/internal/models"
 	"go-server/pkg/cache"
 
@@ -44,7 +45,15 @@ func (suite *CachedUserRepositoryIntegrationTestSuite) SetupSuite() {
 		},
 	}
 
-	loggerManager := logger.NewManager(config.LoggingConfig{}, "test")
+	loggerManager, err := logger.NewManager(config.LoggingConfig{
+			Level:  "info",
+			Format: "json",
+			Output: "stdout",
+		})
+		if err != nil {
+			suite.T().Skipf("Logger not available for testing: %v", err)
+			return
+		}
 	db, err := database.NewDatabase(cfg, loggerManager)
 	if err != nil {
 		suite.T().Skipf("Database not available for testing: %v", err)

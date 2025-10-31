@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"go-server/internal/config"
+	"go-server/internal/logger"
 	"go-server/internal/models"
 
 	"github.com/google/uuid"
@@ -29,7 +30,15 @@ func setupBenchmarkDB(b *testing.B) *Database {
 		Mode: "test",
 	}
 
-	loggerManager := logger.NewManager(config.LoggingConfig{}, "test")
+	loggerManager, err := logger.NewManager(config.LoggingConfig{
+		Level:  "info",
+		Format: "json",
+		Output: "stdout",
+	})
+	if err != nil {
+		b.Skipf("Skipping benchmark tests: logger creation failed: %v", err)
+		return nil
+	}
 	db, err := NewDatabase(cfg, loggerManager)
 	if err != nil {
 		b.Skipf("Skipping benchmark tests: database not available: %v", err)
@@ -91,7 +100,15 @@ func BenchmarkDatabaseConnection(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		loggerManager := logger.NewManager(config.LoggingConfig{}, "test")
+		loggerManager, err := logger.NewManager(config.LoggingConfig{
+		Level:  "info",
+		Format: "json",
+		Output: "stdout",
+	})
+	if err != nil {
+		b.Skipf("Skipping benchmark tests: logger creation failed: %v", err)
+		return
+	}
 	db, err := NewDatabase(cfg, loggerManager)
 		if err != nil {
 			b.Fatalf("Failed to create database connection: %v", err)
@@ -435,7 +452,16 @@ func BenchmarkConnectionPoolConfiguration(b *testing.B) {
 				Mode: "test",
 			}
 
-			db, err := NewDatabase(testCfg)
+		loggerManager, err := logger.NewManager(config.LoggingConfig{
+			Level:  "info",
+			Format: "json",
+			Output: "stdout",
+		})
+		if err != nil {
+			b.Skipf("Skipping config %s: logger creation failed: %v", cfg.name, err)
+			return
+		}
+			db, err := NewDatabase(testCfg, loggerManager)
 			if err != nil {
 				b.Skipf("Skipping config %s: %v", cfg.name, err)
 				return

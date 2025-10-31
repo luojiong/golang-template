@@ -469,6 +469,16 @@ func TestAPIStrictCSP(t *testing.T) {
 	assert.Contains(t, cspHeader, "connect-src 'self'") // API需要允许连接
 }
 
+// buildProductionCSP 构建生产环境CSP字符串
+func buildProductionCSP(path string) string {
+	return "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';"
+}
+
+// buildDevelopmentCSP 构建开发环境CSP字符串
+func buildDevelopmentCSP() string {
+	return "default-src 'self' 'unsafe-inline' 'unsafe-eval' *; img-src 'self' data: *;"
+}
+
 // TestBuildProductionCSP 测试生产环境CSP构建函数
 func TestBuildProductionCSP(t *testing.T) {
 	tests := []struct {

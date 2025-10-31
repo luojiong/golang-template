@@ -370,7 +370,17 @@ func UpdateMiddlewareSetupWithStructuredLogging(cfg *config.Config) []gin.Handle
 	middlewares = append(middlewares, StructuredLoggingMiddleware(cfg))
 
 	// 添加恢复中间件
-	middlewares = append(middlewares, RecoveryMiddleware())
+	logMgr, err := logger.NewManager(cfg.Logging)
+	if err != nil {
+		// 如果创建logger失败，使用默认配置
+		defaultConfig := config.LoggingConfig{
+			Level:  "info",
+			Format: "json",
+		}
+		logMgr, _ = logger.NewManager(defaultConfig)
+	}
+	baseLogger := logMgr.GetLogger("recovery")
+	middlewares = append(middlewares, RecoveryMiddleware(baseLogger))
 
 	// 添加CORS中间件
 	allowedOrigins := []string{"*"}

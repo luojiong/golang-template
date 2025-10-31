@@ -1,4 +1,4 @@
-.PHONY: build run clean test dev fmt lint deps swag install docker-build docker-run db-migrate db-seed db-reset scripts scripts-bash scripts-bat scripts-ps1 check-config
+.PHONY: build run clean test dev fmt lint deps swag install docker-build docker-run db-migrate db-migrate-create db-migrate-down db-migrate-status db-seed db-reset scripts scripts-bash scripts-bat scripts-ps1 check-config
 
 # Application name
 APP_NAME := go-server
