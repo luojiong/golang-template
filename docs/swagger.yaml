@@ -1,0 +1,831 @@
+basePath: /
+definitions:
+  models.ChangePasswordRequest:
+    properties:
+      new_password:
+        description: 新密码
+        example: newpassword123
+        minLength: 6
+        type: string
+      old_password:
+        description: 旧密码
+        example: oldpassword123
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  models.EnhancedErrorResponse:
+    properties:
+      code:
+        allOf:
+        - $ref: '#/definitions/models.ErrorCode'
+        description: 错误代码
+        example: VALIDATION_ERROR
+      details:
+        additionalProperties: true
+        description: 详细信息
+        type: object
+      internal_error:
+        description: 内部错误
+        example: 'Database connection failed: connection timeout'
+        type: string
+      message:
+        description: 错误消息
+        example: Invalid input data
+        type: string
+      user_message:
+        description: 用户友好消息
+        example: Please check your input and try again
+        type: string
+    type: object
+  models.ErrorCode:
+    enum:
+    - VALIDATION_ERROR
+    - NOT_FOUND
+    - UNAUTHORIZED
+    - FORBIDDEN
+    - CONFLICT
+    - RATE_LIMIT_EXCEEDED
+    - INTERNAL_ERROR
+    - DATABASE_ERROR
+    - CACHE_ERROR
+    - SERVICE_UNAVAILABLE
+    - TIMEOUT
+    - INVALID_TOKEN
+    - TOKEN_BLACKLISTED
+    type: string
+    x-enum-comments:
+      ErrorCodeCache: 缓存错误
+      ErrorCodeConflict: 冲突
+      ErrorCodeDatabase: 数据库错误
+      ErrorCodeForbidden: 禁止访问
+      ErrorCodeInternal: 内部错误
+      ErrorCodeInvalidToken: 无效令牌
+      ErrorCodeNotFound: 未找到
+      ErrorCodeRateLimitExceeded: 速率限制超出
+      ErrorCodeServiceUnavailable: 服务不可用
+      ErrorCodeTimeout: 超时
+      ErrorCodeTokenBlacklisted: 令牌已列入黑名单
+      ErrorCodeUnauthorized: 未授权
+      ErrorCodeValidation: 验证错误
+    x-enum-descriptions:
+    - 验证错误
+    - 未找到
+    - 未授权
+    - 禁止访问
+    - 冲突
+    - 速率限制超出
+    - 内部错误
+    - 数据库错误
+    - 缓存错误
+    - 服务不可用
+    - 超时
+    - 无效令牌
+    - 令牌已列入黑名单
+    x-enum-varnames:
+    - ErrorCodeValidation
+    - ErrorCodeNotFound
+    - ErrorCodeUnauthorized
+    - ErrorCodeForbidden
+    - ErrorCodeConflict
+    - ErrorCodeRateLimitExceeded
+    - ErrorCodeInternal
+    - ErrorCodeDatabase
+    - ErrorCodeCache
+    - ErrorCodeServiceUnavailable
+    - ErrorCodeTimeout
+    - ErrorCodeInvalidToken
+    - ErrorCodeTokenBlacklisted
+  models.ErrorResponse:
+    properties:
+      correlation_id:
+        description: 关联ID
+        example: a1b2c3d4
+        type: string
+      error:
+        allOf:
+        - $ref: '#/definitions/models.EnhancedErrorResponse'
+        description: 增强错误信息
+      message:
+        description: 错误消息
+        example: Request failed
+        type: string
+      success:
+        description: 是否成功
+        example: false
+        type: boolean
+      timestamp:
+        description: 时间戳
+        example: "2024-01-01T12:00:00Z"
+        type: string
+    type: object
+  models.HealthResponse:
+    properties:
+      services:
+        additionalProperties:
+          type: string
+        description: 服务状态
+        type: object
+      status:
+        description: 状态
+        example: healthy
+        type: string
+      timestamp:
+        description: 时间戳
+        example: "2024-01-01T00:00:00Z"
+        type: string
+      version:
+        description: 版本号
+        example: 1.0.0
+        type: string
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        description: 邮箱地址
+        example: john@example.com
+        type: string
+      password:
+        description: 密码
+        example: password123
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.LoginResponse:
+    properties:
+      token:
+        description: JWT令牌
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/models.SafeUser'
+        description: 安全用户信息
+    type: object
+  models.PaginatedResponse:
+    properties:
+      data:
+        description: 数据
+      pagination:
+        allOf:
+        - $ref: '#/definitions/models.Pagination'
+        description: 分页信息
+    type: object
+  models.Pagination:
+    properties:
+      limit:
+        description: 每页数量
+        example: 10
+        type: integer
+      page:
+        description: 当前页码
+        example: 1
+        type: integer
+      total:
+        description: 总记录数
+        example: 100
+        type: integer
+      total_pages:
+        description: 总页数
+        example: 10
+        type: integer
+    type: object
+  models.RegisterRequest:
+    properties:
+      email:
+        description: 邮箱地址
+        example: john@example.com
+        type: string
+      first_name:
+        description: 名
+        example: John
+        maxLength: 50
+        type: string
+      last_name:
+        description: 姓
+        example: Doe
+        maxLength: 50
+        type: string
+      password:
+        description: 密码
+        example: password123
+        minLength: 6
+        type: string
+      username:
+        description: 用户名
+        example: johndoe
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  models.SafeUser:
+    properties:
+      avatar:
+        description: 头像URL
+        type: string
+      created_at:
+        description: 创建时间
+        type: string
+      email:
+        description: 邮箱地址
+        type: string
+      first_name:
+        description: 名
+        type: string
+      id:
+        description: 用户ID
+        type: string
+      is_active:
+        description: 是否激活
+        type: boolean
+      is_admin:
+        description: 是否为管理员
+        type: boolean
+      last_login:
+        description: 最后登录时间
+        type: string
+      last_name:
+        description: 姓
+        type: string
+      updated_at:
+        description: 更新时间
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  models.SuccessResponse:
+    properties:
+      correlation_id:
+        description: 关联ID
+        example: a1b2c3d4
+        type: string
+      data:
+        description: 响应数据
+      message:
+        description: 成功消息
+        example: Operation completed successfully
+        type: string
+      success:
+        description: 是否成功
+        example: true
+        type: boolean
+      timestamp:
+        description: 时间戳
+        example: "2024-01-01T12:00:00Z"
+        type: string
+    type: object
+  models.UpdateUserRequest:
+    properties:
+      avatar:
+        description: 头像URL
+        type: string
+      first_name:
+        description: 名
+        maxLength: 50
+        type: string
+      last_name:
+        description: 姓
+        maxLength: 50
+        type: string
+      username:
+        description: 用户名
+        maxLength: 50
+        minLength: 3
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API 支持
+    url: http://www.swagger.io/support
+  description: 一个使用Go和Gin框架构建的RESTful API模板，具有基于Redis的缓存、速率限制和增强的错误处理功能。所有API端点都受到速率限制保护：匿名用户（100次/分钟），认证用户（200次/分钟）。频繁访问的数据（用户配置文件、配置信息）从Redis缓存提供，TTL为5分钟。API具有集中式错误处理，带有用于请求跟踪的关联ID、详细的字段级验证错误（支持国际化消息）和全面的错误上下文。速率限制、缓存头和关联ID都包含在所有响应中。当Redis不可用时，系统会优雅地降级到数据库查询。
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Golang 模板 API
+  version: "1.0"
+paths:
+  /api/v1/auth/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Change the password of the currently authenticated user
+      parameters:
+      - description: Password change data
+        in: body
+        name: changePasswordRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Change user password
+      tags:
+      - auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.LoginResponse'
+              type: object
+        "400":
+          description: Validation error - Invalid input data
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+        "401":
+          description: Authentication error - Invalid credentials
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+      summary: Login user
+      tags:
+      - auth
+  /api/v1/auth/logout:
+    post:
+      description: Logout the current user by blacklisting their JWT token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Logout user
+      tags:
+      - auth
+  /api/v1/auth/me:
+    get:
+      description: Get the profile of the currently authenticated user. This endpoint
+        serves frequently accessed user profile data from Redis cache with 5-minute
+        TTL. If Redis is unavailable, data is served directly from PostgreSQL database.
+        Cache status is provided in response headers.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Cache:
+              description: Cache status (HIT, MISS, BYPASS, STALE)
+              type: string
+            X-Cache-Backend:
+              description: Cache backend used (redis, database)
+              type: string
+            X-Cache-TTL:
+              description: Time to live in seconds for cached data
+              type: integer
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SafeUser'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current user profile
+      tags:
+      - auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account
+      parameters:
+      - description: User registration data
+        in: body
+        name: registerRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Registration successful
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SafeUser'
+              type: object
+        "400":
+          description: Validation error - Invalid input data with field-level details
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+        "409":
+          description: Conflict error - User already exists
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+      summary: Register new user
+      tags:
+      - auth
+  /api/v1/health:
+    get:
+      description: Comprehensive health check including database connection pool metrics,
+        Redis cache statistics, and system information. This endpoint provides detailed
+        monitoring data including connection pool utilization, query performance,
+        cache hit rates, memory usage, and latency metrics.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Cache-Hit-Rate:
+              description: Cache hit rate percentage
+              type: integer
+            X-Cache-Memory-Usage:
+              description: Current Redis memory usage percentage
+              type: integer
+            X-Cache-Status:
+              description: Redis cache health status (healthy, unhealthy, degraded,
+                not_configured)
+              type: string
+            X-Database-Pool-Utilization:
+              description: Database connection pool utilization percentage
+              type: integer
+            X-Database-Status:
+              description: Database health status (healthy, unhealthy, degraded)
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HealthResponse'
+              type: object
+      summary: Enhanced health check endpoint
+      tags:
+      - health
+  /api/v1/live:
+    get:
+      description: Check if the API server is alive (basic liveness probe)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SuccessResponse'
+      summary: Liveness check endpoint
+      tags:
+      - health
+  /api/v1/ready:
+    get:
+      description: Comprehensive readiness check validating database connectivity
+        and cache readiness with detailed performance metrics. This endpoint tests
+        actual read/write operations and provides latency measurements, connection
+        pool status, and cache response times for production monitoring.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Cache-Ready:
+              description: Redis cache readiness status (ready, not_ready, not_configured)
+              type: string
+            X-Cache-Response-Time:
+              description: Cache read/write test response time in milliseconds
+              type: integer
+            X-Database-Ready:
+              description: Database readiness status (ready, not_ready)
+              type: string
+            X-Database-Response-Time:
+              description: Database health check response time in milliseconds
+              type: integer
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HealthResponse'
+              type: object
+      summary: Enhanced readiness check endpoint
+      tags:
+      - health
+  /api/v1/users:
+    get:
+      description: 获取所有用户列表（仅管理员）。此端点从Redis缓存提供频繁访问的用户数据，TTL为5分钟。如果Redis不可用，数据直接从PostgreSQL数据库提供。缓存状态在响应头中提供。
+      parameters:
+      - default: 1
+        description: 页码
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: 每页项目数量
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功获取用户
+          headers:
+            X-Cache:
+              description: 缓存状态 (HIT, MISS, BYPASS, STALE)
+              type: string
+            X-Cache-Backend:
+              description: 使用的缓存后端 (redis, database)
+              type: string
+            X-Cache-TTL:
+              description: 缓存数据生存时间（秒）
+              type: integer
+            X-Correlation-ID:
+              description: 请求追踪的唯一标识符
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.PaginatedResponse'
+              type: object
+        "401":
+          description: 需要身份验证
+          headers:
+            X-Correlation-ID:
+              description: 请求追踪的唯一标识符
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+        "403":
+          description: 需要管理员权限
+          headers:
+            X-Correlation-ID:
+              description: 请求追踪的唯一标识符
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 获取所有用户
+      tags:
+      - users
+  /api/v1/users/{id}:
+    delete:
+      description: Delete a user (admin only or own account)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - users
+    get:
+      description: Get a specific user by ID. This endpoint serves frequently accessed
+        user profile data from Redis cache with 5-minute TTL. If Redis is unavailable,
+        data is served directly from PostgreSQL database. Cache status is provided
+        in response headers.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User retrieved successfully
+          headers:
+            X-Cache:
+              description: Cache status (HIT, MISS, BYPASS, STALE)
+              type: string
+            X-Cache-Backend:
+              description: Cache backend used (redis, database)
+              type: string
+            X-Cache-TTL:
+              description: Time to live in seconds for cached data
+              type: integer
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SafeUser'
+              type: object
+        "401":
+          description: Authentication required
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+        "404":
+          description: User not found
+          headers:
+            X-Correlation-ID:
+              description: Unique identifier for request tracing
+              type: string
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ErrorResponse'
+            - properties:
+                error:
+                  $ref: '#/definitions/models.EnhancedErrorResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update a user's information
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User information
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SafeUser'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    description: 输入"Bearer"后跟空格和JWT令牌。
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,46 @@
+server:
+  port: "8080"  # Override with APP_SERVER_PORT
+  host: "0.0.0.0"  # Override with APP_SERVER_HOST
+  read_timeout: 30
+  write_timeout: 30
+
+database:
+  host: ""  # Set via environment variable APP_DATABASE_HOST
+  port: 5432  # Override with APP_DATABASE_PORT
+  user: ""  # Set via environment variable APP_DATABASE_USER
+  password: ""  # Set via environment variable APP_DATABASE_PASSWORD
+  dbname: ""  # Set via environment variable APP_DATABASE_NAME
+  sslmode: "require"  # Override with APP_DATABASE_SSLMODE
+  # Connection pool settings for staging
+  max_open_conns: 75   # Override with APP_DATABASE_MAX_OPEN_CONNS
+  max_idle_conns: 15   # Override with APP_DATABASE_MAX_IDLE_CONNS
+  conn_max_lifetime: 1800  # Override with APP_DATABASE_CONN_MAX_LIFETIME (30 minutes in seconds)
+
+redis:
+  host: ""  # Set via environment variable APP_REDIS_HOST
+  port: 6379  # Override with APP_REDIS_PORT
+  password: ""  # Override with APP_REDIS_PASSWORD
+  db: 0  # Override with APP_REDIS_DB
+  pool_size: 15  # Override with APP_REDIS_POOL_SIZE
+
+rate_limit:
+  enabled: true  # Override with APP_RATE_LIMIT_ENABLED
+  requests: 200  # Override with APP_RATE_LIMIT_REQUESTS
+  window: "1m"  # Override with APP_RATE_LIMIT_WINDOW
+  redis_key: "rate_limit"  # Override with APP_RATE_LIMIT_REDIS_KEY
+
+logging:
+  level: "info"  # Override with APP_LOG_LEVEL
+  format: "json"  # Override with APP_LOG_FORMAT
+  output: "stdout"  # Override with APP_LOG_OUTPUT
+  max_size: 100  # Override with APP_LOG_MAX_SIZE
+  max_backups: 3  # Override with APP_LOG_MAX_BACKUPS
+  max_age: 28  # Override with APP_LOG_MAX_AGE
+  compress: true  # Override with APP_LOG_COMPRESS
+
+auth:
+  bcrypt_cost: 12  # Override with APP_AUTH_BCRYPT_COST
+
+jwt:
+  secret_key: ""  # Set via environment variable APP_JWT_SECRET_KEY
+  expires_in: 24  # Override with APP_JWT_EXPIRES_IN

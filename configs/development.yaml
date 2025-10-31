@@ -1,0 +1,68 @@
+server:
+  port: "8080"  # Override with APP_SERVER_PORT
+  host: "localhost"  # Override with APP_SERVER_HOST
+  read_timeout: 30
+  write_timeout: 30
+
+database:
+  host: "localhost"  # Override with APP_DATABASE_HOST
+  port: 5432  # Override with APP_DATABASE_PORT
+  user: "postgres"  # Override with APP_DATABASE_USER
+  password: "caine"  # Override with APP_DATABASE_PASSWORD
+  dbname: "golang_template_dev"  # Override with APP_DATABASE_NAME
+  sslmode: "disable"  # Override with APP_DATABASE_SSLMODE
+  # Connection pool settings
+  max_open_conns: 100  # Override with APP_DATABASE_MAX_OPEN_CONNS
+  max_idle_conns: 10   # Override with APP_DATABASE_MAX_IDLE_CONNS
+  conn_max_lifetime: 3600  # Override with APP_DATABASE_CONN_MAX_LIFETIME (1 hour in seconds)
+
+redis:
+  host: "localhost"  # Override with APP_REDIS_HOST
+  port: 6379  # Override with APP_REDIS_PORT
+  password: ""  # Override with APP_REDIS_PASSWORD
+  db: 0  # Override with APP_REDIS_DB
+  pool_size: 10  # Override with APP_REDIS_POOL_SIZE
+
+rate_limit:
+  enabled: true  # Override with APP_RATE_LIMIT_ENABLED
+  requests: 100  # Override with APP_RATE_LIMIT_REQUESTS
+  window: "1m"  # Override with APP_RATE_LIMIT_WINDOW
+  redis_key: "rate_limit"  # Override with APP_RATE_LIMIT_REDIS_KEY
+
+compression:
+  enabled: true  # Override with APP_COMPRESSION_ENABLED
+  threshold: 1024  # Override with APP_COMPRESSION_THRESHOLD (bytes)
+
+logging:
+  # 日志级别：debug, info, warn, error, fatal
+  # 开发环境使用 debug 级别以获取详细的调试信息
+  level: "debug"  # Override with APP_LOG_LEVEL
+
+  # 日志格式：json（结构化JSON格式）或 text（人类可读的文本格式）
+  # 开发环境使用 text 格式以启用颜色输出，提高可读性
+  format: "text"  # Override with APP_LOG_FORMAT
+
+  # 日志输出目标：stdout（仅标准输出）、file（仅文件）、both（同时输出到标准输出和文件）
+  output: "both"  # Override with APP_LOG_OUTPUT (stdout, file, both)
+
+  # 日志文件存储目录
+  directory: "logs"  # Override with APP_LOG_DIRECTORY
+
+  # 单个日志文件的最大大小（MB），超过此大小将触发文件轮转
+  max_size: 100  # Override with APP_LOG_MAX_SIZE (MB)
+
+  # 保留的日志备份文件数量，超过此数量的旧文件将被删除
+  max_backups: 3  # Override with APP_LOG_MAX_BACKUPS
+
+  # 日志文件保留天数，超过此天数的文件将被清理
+  max_age: 28  # Override with APP_LOG_MAX_AGE (days)
+
+  # 是否压缩旧的日志文件
+  compress: true  # Override with APP_LOG_COMPRESS
+
+auth:
+  bcrypt_cost: 10  # Override with APP_AUTH_BCRYPT_COST
+
+jwt:
+  secret_key: "dev-secret-key-change-in-production"  # Override with APP_JWT_SECRET_KEY
+  expires_in: 24  # Override with APP_JWT_EXPIRES_IN
