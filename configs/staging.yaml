@@ -1,46 +1,46 @@
 server:
-  port: "8080"  # Override with APP_SERVER_PORT
-  host: "0.0.0.0"  # Override with APP_SERVER_HOST
+  port: "8080"  # 可通过 APP_SERVER_PORT 环境变量覆盖
+  host: "0.0.0.0"  # 可通过 APP_SERVER_HOST 环境变量覆盖
   read_timeout: 30
   write_timeout: 30
 
 database:
-  host: ""  # Set via environment variable APP_DATABASE_HOST
-  port: 5432  # Override with APP_DATABASE_PORT
-  user: ""  # Set via environment variable APP_DATABASE_USER
-  password: ""  # Set via environment variable APP_DATABASE_PASSWORD
-  dbname: ""  # Set via environment variable APP_DATABASE_NAME
-  sslmode: "require"  # Override with APP_DATABASE_SSLMODE
-  # Connection pool settings for staging
-  max_open_conns: 75   # Override with APP_DATABASE_MAX_OPEN_CONNS
-  max_idle_conns: 15   # Override with APP_DATABASE_MAX_IDLE_CONNS
-  conn_max_lifetime: 1800  # Override with APP_DATABASE_CONN_MAX_LIFETIME (30 minutes in seconds)
+  host: ""  # 通过环境变量 APP_DATABASE_HOST 设置
+  port: 5432  # 可通过 APP_DATABASE_PORT 环境变量覆盖
+  user: ""  # 通过环境变量 APP_DATABASE_USER 设置
+  password: ""  # 通过环境变量 APP_DATABASE_PASSWORD 设置
+  db_name: ""  # 通过环境变量 APP_DATABASE_NAME 设置
+  ssl_mode: "require"  # 可通过 APP_DATABASE_SSLMODE 环境变量覆盖
+  # Staging 环境的连接池设置
+  max_open_conns: 75   # 可通过 APP_DATABASE_MAX_OPEN_CONNS 环境变量覆盖
+  max_idle_conns: 15   # 可通过 APP_DATABASE_MAX_IDLE_CONNS 环境变量覆盖
+  conn_max_lifetime: 1800  # 可通过 APP_DATABASE_CONN_MAX_LIFETIME 环境变量覆盖 (单位：秒，30分钟)
 
 redis:
-  host: ""  # Set via environment variable APP_REDIS_HOST
-  port: 6379  # Override with APP_REDIS_PORT
-  password: ""  # Override with APP_REDIS_PASSWORD
-  db: 0  # Override with APP_REDIS_DB
-  pool_size: 15  # Override with APP_REDIS_POOL_SIZE
+  host: ""  # 通过环境变量 APP_REDIS_HOST 设置
+  port: 6379  # 可通过 APP_REDIS_PORT 环境变量覆盖
+  password: ""  # 可通过 APP_REDIS_PASSWORD 环境变量覆盖
+  db: 0  # 可通过 APP_REDIS_DB 环境变量覆盖
+  pool_size: 15  # 可通过 APP_REDIS_POOL_SIZE 环境变量覆盖
 
 rate_limit:
-  enabled: true  # Override with APP_RATE_LIMIT_ENABLED
-  requests: 200  # Override with APP_RATE_LIMIT_REQUESTS
-  window: "1m"  # Override with APP_RATE_LIMIT_WINDOW
-  redis_key: "rate_limit"  # Override with APP_RATE_LIMIT_REDIS_KEY
+  enabled: true  # 可通过 APP_RATE_LIMIT_ENABLED 环境变量覆盖
+  requests: 200  # 可通过 APP_RATE_LIMIT_REQUESTS 环境变量覆盖
+  window: "1m"  # 可通过 APP_RATE_LIMIT_WINDOW 环境变量覆盖
+  redis_key: "rate_limit"  # 可通过 APP_RATE_LIMIT_REDIS_KEY 环境变量覆盖
 
 logging:
-  level: "info"  # Override with APP_LOG_LEVEL
-  format: "json"  # Override with APP_LOG_FORMAT
-  output: "stdout"  # Override with APP_LOG_OUTPUT
-  max_size: 100  # Override with APP_LOG_MAX_SIZE
-  max_backups: 3  # Override with APP_LOG_MAX_BACKUPS
-  max_age: 28  # Override with APP_LOG_MAX_AGE
-  compress: true  # Override with APP_LOG_COMPRESS
+  level: "info"  # 可通过 APP_LOG_LEVEL 环境变量覆盖
+  format: "json"  # 可通过 APP_LOG_FORMAT 环境变量覆盖
+  output: "stdout"  # 可通过 APP_LOG_OUTPUT 环境变量覆盖
+  max_size: 100  # 可通过 APP_LOG_MAX_SIZE 环境变量覆盖
+  max_backups: 3  # 可通过 APP_LOG_MAX_BACKUPS 环境变量覆盖
+  max_age: 28  # 可通过 APP_LOG_MAX_AGE 环境变量覆盖
+  compress: true  # 可通过 APP_LOG_COMPRESS 环境变量覆盖
 
 auth:
-  bcrypt_cost: 12  # Override with APP_AUTH_BCRYPT_COST
+  bcrypt_cost: 12  # 可通过 APP_AUTH_BCRYPT_COST 环境变量覆盖
 
 jwt:
-  secret_key: ""  # Set via environment variable APP_JWT_SECRET_KEY
-  expires_in: 24  # Override with APP_JWT_EXPIRES_IN
+  secret_key: ""  # 通过环境变量 APP_JWT_SECRET_KEY 设置
+  expires_in: 24  # 可通过 APP_JWT_EXPIRES_IN 环境变量覆盖

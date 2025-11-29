@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9/maintnotifications"
 )
 
 // RedisCache 使用 Redis 实现 Cache 接口
@@ -55,17 +56,20 @@ func NewRedisCache(config *RedisConfig) (Cache, error) {
 		config = DefaultRedisConfig()
 	}
 
-	rdb := redis.NewClient(&redis.Options{
-		Addr:         fmt.Sprintf("%s:%d", config.Host, config.Port),
-		Password:     config.Password,
-		DB:           config.DB,
-		PoolSize:     config.PoolSize,
-		MinIdleConns: config.MinIdleConns,
-		DialTimeout:  config.DialTimeout,
-		ReadTimeout:  config.ReadTimeout,
-		WriteTimeout: config.WriteTimeout,
-		PoolTimeout:  config.PoolTimeout,
-	})
+    rdb := redis.NewClient(&redis.Options{
+        Addr:         fmt.Sprintf("%s:%d", config.Host, config.Port),
+        Password:     config.Password,
+        DB:           config.DB,
+        PoolSize:     config.PoolSize,
+        MinIdleConns: config.MinIdleConns,
+        DialTimeout:  config.DialTimeout,
+        ReadTimeout:  config.ReadTimeout,
+        WriteTimeout: config.WriteTimeout,
+        PoolTimeout:  config.PoolTimeout,
+        MaintNotificationsConfig: &maintnotifications.Config{ // disable unsupported Redis Cloud feature
+            Mode: maintnotifications.ModeDisabled,
+        },
+    })
 
 	// 测试连接
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

@@ -164,7 +164,7 @@ func (s *userServiceV2) GetByID(ctx context.Context, userID string) (*user.User,
 	}
 
 	// 创建用户ID值对象
-	userIDValue, err := user.NewUserID(userID)
+	userIDValue, err := user.NewUserIDFromString(userID)
 	if err != nil {
 		return nil, s.baseService.HandleError(ctx, err, "create user ID value object")
 	}
@@ -367,7 +367,7 @@ func (s *userServiceV2) Delete(ctx context.Context, userID, requesterID string) 
 	}
 
 	// 创建用户ID值对象
-	userIDValue, err := user.NewUserID(userID)
+	userIDValue, err := user.NewUserIDFromString(userID)
 	if err != nil {
 		return s.baseService.HandleError(ctx, err, "create user ID value object for deletion")
 	}
@@ -395,7 +395,7 @@ func (s *userServiceV2) ChangePassword(ctx context.Context, userID string, dto *
 	}
 
 	// 创建用户ID值对象
-	userIDValue, err := user.NewUserID(userID)
+	userIDValue, err := user.NewUserIDFromString(userID)
 	if err != nil {
 		return s.baseService.HandleError(ctx, err, "create user ID value object for password change")
 	}

@@ -128,8 +128,8 @@ database:
   port: 5432
   user: "test"
   password: "test"
-  dbname: "test"
-  sslmode: "disable"
+  db_name: "test"
+  ssl_mode: "disable"
 logging:
   level: "info"
   format: "json"

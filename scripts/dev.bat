@@ -145,19 +145,5 @@ echo.
 REM Start the server
 go run cmd/api/main.go
 
-REM Cleanup
-echo.
-echo [INFO] Cleaning up...
-where docker >nul 2>nul
-if %errorlevel% equ 0 (
-    set /p "response=Do you want to stop the PostgreSQL container? (y/N) "
-    if /i "!response!"=="y" (
-        echo [INFO] Stopping PostgreSQL container...
-        docker stop postgres-dev >nul 2>nul
-        docker rm postgres-dev >nul 2>nul
-        echo [SUCCESS] PostgreSQL container stopped and removed
-    )
-)
-echo [SUCCESS] Cleanup completed
 
 pause

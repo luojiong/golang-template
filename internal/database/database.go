@@ -223,14 +223,14 @@ func (d *Database) registerQueryCallbacks() {
 
 // NewDatabase 创建新的数据库连接
 func NewDatabase(cfg *config.Config, loggerManager *logger.Manager) (*Database, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=UTC",
-		cfg.Database.Host,
-		cfg.Database.User,
-		cfg.Database.Password,
-		cfg.Database.DBName,
-		cfg.Database.Port,
-		cfg.Database.SSLMode,
-	)
+    dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=UTC",
+        cfg.Database.Host,
+        cfg.Database.User,
+        cfg.Database.Password,
+        cfg.Database.DBName,
+        cfg.Database.Port,
+        cfg.Database.SSLMode,
+    )
 
 	// 配置GORM日志
 	var gormLogLevel gormlogger.LogLevel

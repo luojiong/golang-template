@@ -23,7 +23,7 @@ func (v ValidationError) Error() string {
 
 // ValidationResult 包含验证结果
 type ValidationResult struct {
-	Valid  bool               // 是否有效
+	Valid  bool              // 是否有效
 	Errors []ValidationError // 错误列表
 }
 
@@ -175,7 +175,7 @@ func (v *Validator) validateDatabase(result *ValidationResult) {
 	// 验证数据库名称
 	if db.DBName == "" {
 		result.Errors = append(result.Errors, ValidationError{
-			Field:   "database.dbname",
+			Field:   "database.db_name",
 			Message: "数据库名称是必需的",
 			Value:   db.DBName,
 		})
@@ -186,7 +186,7 @@ func (v *Validator) validateDatabase(result *ValidationResult) {
 	validSSLModes := []string{"disable", "allow", "prefer", "require", "verify-ca", "verify-full"}
 	if db.SSLMode == "" {
 		result.Errors = append(result.Errors, ValidationError{
-			Field:   "database.sslmode",
+			Field:   "database.ssl_mode",
 			Message: "数据库SSL模式是必需的",
 			Value:   db.SSLMode,
 		})
@@ -201,7 +201,7 @@ func (v *Validator) validateDatabase(result *ValidationResult) {
 		}
 		if !isValidSSLMode {
 			result.Errors = append(result.Errors, ValidationError{
-				Field:   "database.sslmode",
+				Field:   "database.ssl_mode",
 				Message: fmt.Sprintf("数据库SSL模式必须是以下之一: %s", strings.Join(validSSLModes, ", ")),
 				Value:   db.SSLMode,
 			})
@@ -499,7 +499,6 @@ func (v *Validator) validateFileLoggingSettings(logging LoggingConfig, result *V
 		v.validateDirectoryAccess(logging.Directory, result)
 	}
 
-	
 	// 验证日志轮换设置 - 最大文件大小
 	if logging.MaxSize <= 0 {
 		result.Errors = append(result.Errors, ValidationError{

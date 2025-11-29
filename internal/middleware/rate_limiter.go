@@ -1,18 +1,19 @@
 package middleware
 
 import (
-	"context"
-	"fmt"
-	"net/http"
-	"strconv"
-	"sync"
-	"time"
+    "context"
+    "fmt"
+    "net/http"
+    "strconv"
+    "sync"
+    "time"
 
-	"go-server/internal/config"
-	"go-server/pkg/response"
+    "go-server/internal/config"
+    "go-server/pkg/response"
 
-	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
+    "github.com/gin-gonic/gin"
+    "github.com/redis/go-redis/v9"
+    "github.com/redis/go-redis/v9/maintnotifications"
 )
 
 // RateLimiterConfig 速率限制器配置
@@ -110,13 +111,16 @@ func (m *MemoryRateLimiter) isAllowed(clientID string) (bool, time.Duration) {
 
 // NewDistributedRateLimiter 创建分布式速率限制器
 func NewDistributedRateLimiter(cfg RateLimiterConfig) *DistributedRateLimiter {
-	// 创建 Redis 客户端
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     cfg.RedisAddr,
-		Password: cfg.RedisPassword,
-		DB:       cfg.RedisDB,
-		PoolSize: cfg.RedisPoolSize,
-	})
+    // 创建 Redis 客户端
+    rdb := redis.NewClient(&redis.Options{
+        Addr:     cfg.RedisAddr,
+        Password: cfg.RedisPassword,
+        DB:       cfg.RedisDB,
+        PoolSize: cfg.RedisPoolSize,
+        MaintNotificationsConfig: &maintnotifications.Config{
+            Mode: maintnotifications.ModeDisabled,
+        },
+    })
 
 	// 创建内存降级限制器
 	fallback := NewMemoryRateLimiter(cfg.AuthenticatedRequests, cfg.WindowDuration)

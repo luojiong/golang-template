@@ -14,6 +14,7 @@ func (c *Container) initializeRouter() error {
 		c.UserHandler,
 		c.HealthHandler,
 		c.JWTManager,
+		c.UserRepository,
 		c.Middlewares,
 	)
 

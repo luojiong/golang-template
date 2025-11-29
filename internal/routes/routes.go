@@ -2,17 +2,19 @@ package routes
 
 import (
 	"go-server/internal/handlers"
+	"go-server/internal/repositories"
 	"go-server/pkg/auth"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Router struct {
-	engine        *gin.Engine
-	authHandler   *handlers.AuthHandler
-	userHandler   *handlers.UserHandler
-	healthHandler *handlers.HealthHandler
-	jwtManager    *auth.JWTManager
+	engine         *gin.Engine
+	authHandler    *handlers.AuthHandler
+	userHandler    *handlers.UserHandler
+	healthHandler  *handlers.HealthHandler
+	jwtManager     *auth.JWTManager
+	userRepository repositories.UserRepository
 }
 
 func NewRouter(
@@ -20,6 +22,7 @@ func NewRouter(
 	userHandler *handlers.UserHandler,
 	healthHandler *handlers.HealthHandler,
 	jwtManager *auth.JWTManager,
+	userRepository repositories.UserRepository,
 	middlewares []gin.HandlerFunc,
 ) *Router {
 	// Note: Gin mode is already set in SetupMiddlewares, but we ensure consistent mode here
@@ -37,11 +40,12 @@ func NewRouter(
 	engine.Use(middlewares...)
 
 	return &Router{
-		engine:        engine,
-		authHandler:   authHandler,
-		userHandler:   userHandler,
-		healthHandler: healthHandler,
-		jwtManager:    jwtManager,
+		engine:         engine,
+		authHandler:    authHandler,
+		userHandler:    userHandler,
+		healthHandler:  healthHandler,
+		jwtManager:     jwtManager,
+		userRepository: userRepository,
 	}
 }
 
@@ -53,7 +57,7 @@ func (r *Router) SetupRoutes() {
 	SetupAuthRoutes(r.engine, r.authHandler, r.jwtManager)
 
 	// User routes
-	SetupUserRoutes(r.engine, r.userHandler, r.jwtManager)
+	r.SetupUserRoutes()
 
 	// Welcome route with enhanced middleware integration
 	r.engine.GET("/", func(c *gin.Context) {

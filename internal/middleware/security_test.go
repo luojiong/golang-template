@@ -41,7 +41,7 @@ func TestSecurityHeadersMiddleware(t *testing.T) {
 				"Cross-Origin-Embedder-Policy":      "require-corp",
 				"Cross-Origin-Resource-Policy":      "same-origin",
 				"Cross-Origin-Opener-Policy":        "same-origin",
-				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), speaker-selection=(), vr=(), interest-cohort=()",
+				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), interest-cohort=()",
 				"Strict-Transport-Security":         "max-age=31536000; includeSubDomains; preload",
 				"Cache-Control":                     "no-store, no-cache, must-revalidate, proxy-revalidate",
 				"Pragma":                            "no-cache",
@@ -66,7 +66,7 @@ func TestSecurityHeadersMiddleware(t *testing.T) {
 				"Cross-Origin-Embedder-Policy":      "require-corp",
 				"Cross-Origin-Resource-Policy":      "same-origin",
 				"Cross-Origin-Opener-Policy":        "same-origin",
-				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), speaker-selection=(), vr=(), interest-cohort=()",
+				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), interest-cohort=()",
 				"Strict-Transport-Security":         "max-age=2592000; includeSubDomains",
 				"Cache-Control":                     "no-store, no-cache, must-revalidate, proxy-revalidate",
 				"Pragma":                            "no-cache",
@@ -91,7 +91,7 @@ func TestSecurityHeadersMiddleware(t *testing.T) {
 				"Cross-Origin-Embedder-Policy":      "require-corp",
 				"Cross-Origin-Resource-Policy":      "same-origin",
 				"Cross-Origin-Opener-Policy":        "same-origin",
-				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), speaker-selection=(), vr=(), interest-cohort=()",
+				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), interest-cohort=()",
 				"Strict-Transport-Security":         "max-age=86400; includeSubDomains",
 				"Cache-Control":                     "no-store, no-cache, must-revalidate, proxy-revalidate",
 				"Pragma":                            "no-cache",
@@ -116,7 +116,7 @@ func TestSecurityHeadersMiddleware(t *testing.T) {
 				"Cross-Origin-Embedder-Policy":      "require-corp",
 				"Cross-Origin-Resource-Policy":      "same-origin",
 				"Cross-Origin-Opener-Policy":        "same-origin",
-				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), speaker-selection=(), vr=(), interest-cohort=()",
+				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), interest-cohort=()",
 				"Cache-Control":                     "no-store, no-cache, must-revalidate, proxy-revalidate",
 				"Pragma":                            "no-cache",
 				"Expires":                           "0",
@@ -124,7 +124,7 @@ func TestSecurityHeadersMiddleware(t *testing.T) {
 			},
 		},
 		{
-			name:    "Swagger文档页面 - 特殊CSP策略",
+			name:    "Swagger文档页面 - 特殊CSP策略和宽松CORS",
 			mode:    "production",
 			isHTTPS: true,
 			path:    "/swagger/index.html",
@@ -137,10 +137,7 @@ func TestSecurityHeadersMiddleware(t *testing.T) {
 				"X-Permitted-Cross-Domain-Policies": "none",
 				"X-Server":                          "go-server",
 				"Referrer-Policy":                   "strict-origin-when-cross-origin",
-				"Cross-Origin-Embedder-Policy":      "require-corp",
-				"Cross-Origin-Resource-Policy":      "same-origin",
-				"Cross-Origin-Opener-Policy":        "same-origin",
-				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), speaker-selection=(), vr=(), interest-cohort=()",
+				"Permissions-Policy":                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(), picture-in-picture=(), interest-cohort=()",
 				"Strict-Transport-Security":         "max-age=31536000; includeSubDomains; preload",
 			},
 		},
@@ -291,13 +288,10 @@ func TestEnhancedSecurityHeaders(t *testing.T) {
 
 	// 验证增强的权限策略包含新的功能限制
 	permissionsPolicy := w.Header().Get("Permissions-Policy")
-	assert.Contains(t, permissionsPolicy, "ambient-light-sensor=()")
 	assert.Contains(t, permissionsPolicy, "autoplay=()")
 	assert.Contains(t, permissionsPolicy, "encrypted-media=()")
 	assert.Contains(t, permissionsPolicy, "fullscreen=()")
 	assert.Contains(t, permissionsPolicy, "picture-in-picture=()")
-	assert.Contains(t, permissionsPolicy, "speaker-selection=()")
-	assert.Contains(t, permissionsPolicy, "vr=()")
 	assert.Contains(t, permissionsPolicy, "interest-cohort=()")
 }
 

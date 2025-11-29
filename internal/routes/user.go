@@ -1,20 +1,23 @@
 package routes
 
 import (
-	"go-server/internal/handlers"
 	"go-server/internal/middleware"
-	"go-server/pkg/auth"
-
-	"github.com/gin-gonic/gin"
 )
 
-func SetupUserRoutes(router *gin.Engine, userHandler *handlers.UserHandler, jwtManager *auth.JWTManager) {
-	userGroup := router.Group("/api/v1/users")
-	userGroup.Use(middleware.AuthMiddleware(jwtManager))
+func (r *Router) SetupUserRoutes() {
+	userGroup := r.engine.Group("/api/v1/users")
+	userGroup.Use(middleware.AuthMiddleware(r.jwtManager))
 	{
-		userGroup.GET("", userHandler.GetUsers)
-		userGroup.GET("/:id", userHandler.GetUser)
-		userGroup.PUT("/:id", userHandler.UpdateUser)
-		userGroup.DELETE("/:id", userHandler.DeleteUser)
+		// Routes available to any authenticated user
+		userGroup.GET("/:id", r.userHandler.GetUser)
+
+		// Routes available only to admins
+		adminGroup := userGroup.Group("")
+		adminGroup.Use(middleware.AdminOnlyMiddleware(r.userRepository))
+		{
+			adminGroup.GET("", r.userHandler.GetUsers)
+			adminGroup.PUT("/:id", r.userHandler.UpdateUser)
+			adminGroup.DELETE("/:id", r.userHandler.DeleteUser)
+		}
 	}
 }

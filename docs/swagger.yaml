@@ -302,6 +302,46 @@ definitions:
         minLength: 3
         type: string
     type: object
+  validation.ChangePasswordDTO:
+    properties:
+      new_password:
+        type: string
+      old_password:
+        type: string
+    type: object
+  validation.LoginUserDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  validation.RegisterUserDTO:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  validation.UpdateUserDTO:
+    properties:
+      avatar:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -352,23 +392,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate a user and return a JWT token
+      description: 用户登录接口
       parameters:
-      - description: Login credentials
+      - description: 登录信息
         in: body
-        name: loginRequest
+        name: login
         required: true
         schema:
-          $ref: '#/definitions/models.LoginRequest'
+          $ref: '#/definitions/validation.LoginUserDTO'
       produces:
       - application/json
       responses:
         "200":
-          description: Login successful
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
+          description: OK
           schema:
             allOf:
             - $ref: '#/definitions/models.SuccessResponse'
@@ -377,32 +413,18 @@ paths:
                   $ref: '#/definitions/models.LoginResponse'
               type: object
         "400":
-          description: Validation error - Invalid input data
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
+          description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
-          description: Authentication error - Invalid credentials
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
+          description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
-      summary: Login user
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: 用户登录
       tags:
       - auth
   /api/v1/auth/logout:
@@ -469,23 +491,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Register a new user account
+      description: 用户注册接口
       parameters:
-      - description: User registration data
+      - description: 注册信息
         in: body
-        name: registerRequest
+        name: register
         required: true
         schema:
-          $ref: '#/definitions/models.RegisterRequest'
+          $ref: '#/definitions/validation.RegisterUserDTO'
       produces:
       - application/json
       responses:
         "201":
-          description: Registration successful
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
+          description: Created
           schema:
             allOf:
             - $ref: '#/definitions/models.SuccessResponse'
@@ -494,32 +512,18 @@ paths:
                   $ref: '#/definitions/models.SafeUser'
               type: object
         "400":
-          description: Validation error - Invalid input data with field-level details
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
+          description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "409":
-          description: Conflict error - User already exists
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
+          description: Conflict
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
-      summary: Register new user
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: 用户注册
       tags:
       - auth
   /api/v1/health:
@@ -609,7 +613,7 @@ paths:
       - health
   /api/v1/users:
     get:
-      description: 获取所有用户列表（仅管理员）。此端点从Redis缓存提供频繁访问的用户数据，TTL为5分钟。如果Redis不可用，数据直接从PostgreSQL数据库提供。缓存状态在响应头中提供。
+      description: 获取所有用户列表（仅管理员）
       parameters:
       - default: 1
         description: 页码
@@ -625,20 +629,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: 成功获取用户
-          headers:
-            X-Cache:
-              description: 缓存状态 (HIT, MISS, BYPASS, STALE)
-              type: string
-            X-Cache-Backend:
-              description: 使用的缓存后端 (redis, database)
-              type: string
-            X-Cache-TTL:
-              description: 缓存数据生存时间（秒）
-              type: integer
-            X-Correlation-ID:
-              description: 请求追踪的唯一标识符
-              type: string
+          description: OK
           schema:
             allOf:
             - $ref: '#/definitions/models.SuccessResponse'
@@ -647,31 +638,13 @@ paths:
                   $ref: '#/definitions/models.PaginatedResponse'
               type: object
         "401":
-          description: 需要身份验证
-          headers:
-            X-Correlation-ID:
-              description: 请求追踪的唯一标识符
-              type: string
+          description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "403":
-          description: 需要管理员权限
-          headers:
-            X-Correlation-ID:
-              description: 请求追踪的唯一标识符
-              type: string
+          description: Forbidden
           schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
+            $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 获取所有用户
@@ -679,9 +652,9 @@ paths:
       - users
   /api/v1/users/{id}:
     delete:
-      description: Delete a user (admin only or own account)
+      description: 删除用户（仅限本人或管理员）
       parameters:
-      - description: User ID
+      - description: 用户ID
         in: path
         name: id
         required: true
@@ -693,6 +666,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
@@ -707,92 +684,17 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Delete user
+      summary: 删除用户
       tags:
       - users
     get:
-      description: Get a specific user by ID. This endpoint serves frequently accessed
-        user profile data from Redis cache with 5-minute TTL. If Redis is unavailable,
-        data is served directly from PostgreSQL database. Cache status is provided
-        in response headers.
+      description: 根据ID获取用户信息
       parameters:
-      - description: User ID
+      - description: 用户ID
         in: path
         name: id
         required: true
         type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: User retrieved successfully
-          headers:
-            X-Cache:
-              description: Cache status (HIT, MISS, BYPASS, STALE)
-              type: string
-            X-Cache-Backend:
-              description: Cache backend used (redis, database)
-              type: string
-            X-Cache-TTL:
-              description: Time to live in seconds for cached data
-              type: integer
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.SuccessResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.SafeUser'
-              type: object
-        "401":
-          description: Authentication required
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
-        "404":
-          description: User not found
-          headers:
-            X-Correlation-ID:
-              description: Unique identifier for request tracing
-              type: string
-          schema:
-            allOf:
-            - $ref: '#/definitions/models.ErrorResponse'
-            - properties:
-                error:
-                  $ref: '#/definitions/models.EnhancedErrorResponse'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Get user by ID
-      tags:
-      - users
-    put:
-      consumes:
-      - application/json
-      description: Update a user's information
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: User information
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/models.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -819,7 +721,101 @@ paths:
             $ref: '#/definitions/models.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Update user
+      summary: 获取用户信息
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: 更新用户信息
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 用户信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/validation.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SafeUser'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 更新用户信息
+      tags:
+      - users
+  /api/v1/users/{id}/password:
+    put:
+      consumes:
+      - application/json
+      description: 修改用户密码
+      parameters:
+      - description: 用户ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 密码信息
+        in: body
+        name: password
+        required: true
+        schema:
+          $ref: '#/definitions/validation.ChangePasswordDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 修改密码
       tags:
       - users
 securityDefinitions:

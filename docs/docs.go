@@ -77,7 +77,7 @@ const docTemplate = `{
         },
         "/api/v1/auth/login": {
             "post": {
-                "description": "Authenticate a user and return a JWT token",
+                "description": "用户登录接口",
                 "consumes": [
                     "application/json"
                 ],
@@ -87,21 +87,21 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Login user",
+                "summary": "用户登录",
                 "parameters": [
                     {
-                        "description": "Login credentials",
-                        "name": "loginRequest",
+                        "description": "登录信息",
+                        "name": "login",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.LoginRequest"
+                            "$ref": "#/definitions/validation.LoginUserDTO"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Login successful",
+                        "description": "OK",
                         "schema": {
                             "allOf": [
                                 {
@@ -116,60 +116,24 @@ const docTemplate = `{
                                     }
                                 }
                             ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
                         }
                     },
                     "400": {
-                        "description": "Validation error - Invalid input data",
+                        "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "401": {
-                        "description": "Authentication error - Invalid credentials",
+                        "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -271,7 +235,7 @@ const docTemplate = `{
         },
         "/api/v1/auth/register": {
             "post": {
-                "description": "Register a new user account",
+                "description": "用户注册接口",
                 "consumes": [
                     "application/json"
                 ],
@@ -281,21 +245,21 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Register new user",
+                "summary": "用户注册",
                 "parameters": [
                     {
-                        "description": "User registration data",
-                        "name": "registerRequest",
+                        "description": "注册信息",
+                        "name": "register",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.RegisterRequest"
+                            "$ref": "#/definitions/validation.RegisterUserDTO"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Registration successful",
+                        "description": "Created",
                         "schema": {
                             "allOf": [
                                 {
@@ -310,60 +274,24 @@ const docTemplate = `{
                                     }
                                 }
                             ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
                         }
                     },
                     "400": {
-                        "description": "Validation error - Invalid input data with field-level details",
+                        "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "409": {
-                        "description": "Conflict error - User already exists",
+                        "description": "Conflict",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -500,7 +428,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "获取所有用户列表（仅管理员）。此端点从Redis缓存提供频繁访问的用户数据，TTL为5分钟。如果Redis不可用，数据直接从PostgreSQL数据库提供。缓存状态在响应头中提供。",
+                "description": "获取所有用户列表（仅管理员）",
                 "produces": [
                     "application/json"
                 ],
@@ -526,7 +454,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "成功获取用户",
+                        "description": "OK",
                         "schema": {
                             "allOf": [
                                 {
@@ -541,72 +469,18 @@ const docTemplate = `{
                                     }
                                 }
                             ]
-                        },
-                        "headers": {
-                            "X-Cache": {
-                                "type": "string",
-                                "description": "缓存状态 (HIT, MISS, BYPASS, STALE)"
-                            },
-                            "X-Cache-Backend": {
-                                "type": "string",
-                                "description": "使用的缓存后端 (redis, database)"
-                            },
-                            "X-Cache-TTL": {
-                                "type": "integer",
-                                "description": "缓存数据生存时间（秒）"
-                            },
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "请求追踪的唯一标识符"
-                            }
                         }
                     },
                     "401": {
-                        "description": "需要身份验证",
+                        "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "请求追踪的唯一标识符"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "需要管理员权限",
+                        "description": "Forbidden",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "请求追踪的唯一标识符"
-                            }
+                            "$ref": "#/definitions/models.ErrorResponse"
                         }
                     }
                 }
@@ -619,143 +493,21 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get a specific user by ID. This endpoint serves frequently accessed user profile data from Redis cache with 5-minute TTL. If Redis is unavailable, data is served directly from PostgreSQL database. Cache status is provided in response headers.",
+                "description": "根据ID获取用户信息",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Get user by ID",
+                "summary": "获取用户信息",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User ID",
+                        "description": "用户ID",
                         "name": "id",
                         "in": "path",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "User retrieved successfully",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.SuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.SafeUser"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Cache": {
-                                "type": "string",
-                                "description": "Cache status (HIT, MISS, BYPASS, STALE)"
-                            },
-                            "X-Cache-Backend": {
-                                "type": "string",
-                                "description": "Cache backend used (redis, database)"
-                            },
-                            "X-Cache-TTL": {
-                                "type": "integer",
-                                "description": "Time to live in seconds for cached data"
-                            },
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Authentication required",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.ErrorResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "error": {
-                                            "$ref": "#/definitions/models.EnhancedErrorResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        "headers": {
-                            "X-Correlation-ID": {
-                                "type": "string",
-                                "description": "Unique identifier for request tracing"
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a user's information",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Update user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "User information",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UpdateUserRequest"
-                        }
                     }
                 ],
                 "responses": {
@@ -797,24 +549,110 @@ const docTemplate = `{
                     }
                 }
             },
-            "delete": {
+            "put": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Delete a user (admin only or own account)",
+                "description": "更新用户信息",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Delete user",
+                "summary": "更新用户信息",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User ID",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "用户信息",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/validation.UpdateUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.SafeUser"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "删除用户（仅限本人或管理员）",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "删除用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -827,6 +665,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.SuccessResponse"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
@@ -835,6 +679,70 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/password": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "修改用户密码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "修改密码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "密码信息",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/validation.ChangePasswordDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/models.ErrorResponse"
                         }
@@ -1245,6 +1153,68 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 3
+                }
+            }
+        },
+        "validation.ChangePasswordDTO": {
+            "type": "object",
+            "properties": {
+                "new_password": {
+                    "type": "string"
+                },
+                "old_password": {
+                    "type": "string"
+                }
+            }
+        },
+        "validation.LoginUserDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "validation.RegisterUserDTO": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "validation.UpdateUserDTO": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

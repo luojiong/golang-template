@@ -746,8 +746,8 @@ database:
   port: 5432
   user: "postgres"
   password: "password"
-  dbname: "golang_template_dev"
-  sslmode: "disable"
+  db_name: "golang_template_dev"
+  ssl_mode: "disable"
   max_open_conns: 25
   max_idle_conns: 10
   conn_max_lifetime: 300
@@ -865,8 +865,8 @@ make scripts-bat     # Windows CMD
      port: 5432
      user: "postgres"  # or your created user
      password: "password"
-     dbname: "golang_template_dev"
-     sslmode: "disable"
+     db_name: "golang_template_dev"
+     ssl_mode: "disable"
    ```
 
 #### Using Docker for Database

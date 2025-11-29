@@ -125,8 +125,8 @@ func (c *Container) registerConfigHandlers() {
 				logger.String("new_host", newConfig.Host),
 				logger.Int("old_port", oldConfig.Port),
 				logger.Int("new_port", newConfig.Port),
-				logger.String("old_dbname", oldConfig.DBName),
-				logger.String("new_dbname", newConfig.DBName))
+				logger.String("old_db_name", oldConfig.DBName),
+				logger.String("new_db_name", newConfig.DBName))
 
 			appLogger.Warn(ctx, "数据库配置更改需要重启应用程序才能生效")
 		})

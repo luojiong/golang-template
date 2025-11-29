@@ -1,10 +1,10 @@
 package database
 
 import (
+	"go-server/internal/config"
+	"go-server/internal/logger"
 	"testing"
 	"time"
-
-	"go-server/internal/config"
 )
 
 func TestDatabaseConnectionPoolConfiguration(t *testing.T) {
@@ -217,12 +217,14 @@ func TestSlowQueryThreshold(t *testing.T) {
 }
 
 func TestQueryStatsInitialization(t *testing.T) {
+	logManager := logger.NewManager(&config.Config{Log: config.LogConfig{Level: "debug", Format: "text"}})
 	// Test query statistics initialization
 	db := &Database{
 		queryStats: &QueryPerformanceStats{
 			SlowQueryThreshold: SlowQueryThreshold,
 			MinDuration:        0,
 		},
+		logger: logManager.GetLogger("test"),
 	}
 
 	// Verify initialization
@@ -241,6 +243,7 @@ func TestQueryStatsInitialization(t *testing.T) {
 }
 
 func TestQueryPerformanceStatsJSON(t *testing.T) {
+	logManager := logger.NewManager(&config.Config{Log: config.LogConfig{Level: "debug", Format: "text"}})
 	// Test JSON serialization of query performance stats
 	db := &Database{
 		queryStats: &QueryPerformanceStats{
@@ -252,6 +255,7 @@ func TestQueryPerformanceStatsJSON(t *testing.T) {
 			MaxDuration:        50 * time.Millisecond,
 			MinDuration:        5 * time.Millisecond,
 		},
+		logger: logManager.GetLogger("test"),
 	}
 
 	statsJSON := db.GetQueryPerformanceStatsJSON()
@@ -271,6 +275,7 @@ func TestQueryPerformanceStatsJSON(t *testing.T) {
 }
 
 func TestResetQueryPerformanceStats(t *testing.T) {
+	logManager := logger.NewManager(&config.Config{Log: config.LogConfig{Level: "debug", Format: "text"}})
 	// Test resetting query performance statistics
 	db := &Database{
 		queryStats: &QueryPerformanceStats{
@@ -283,6 +288,7 @@ func TestResetQueryPerformanceStats(t *testing.T) {
 			MinDuration:        1 * time.Millisecond,
 			LastSlowQuery:      time.Now(),
 		},
+		logger: logManager.GetLogger("test"),
 	}
 
 	// Reset statistics

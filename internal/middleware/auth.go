@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"go-server/internal/domain/user"
+	"go-server/internal/repositories"
 	"net/http"
 	"strings"
 
@@ -59,20 +61,41 @@ func OptionalAuthMiddleware(jwtManager *auth.JWTManager) gin.HandlerFunc {
 	}
 }
 
-func AdminOnlyMiddleware() gin.HandlerFunc {
+func AdminOnlyMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// In a real application, you would check user roles from database
-		// For now, we'll just check if user exists
-		userID, exists := c.Get("user_id")
+		userIDVal, exists := c.Get("user_id")
 		if !exists {
 			response.Error(c, http.StatusUnauthorized, "User not authenticated")
 			c.Abort()
 			return
 		}
 
-		// Here you would check if user has admin role
-		// For demo purposes, we'll assume user with ID "admin" is admin
-		if userID != "admin" {
+		userID, ok := userIDVal.(string)
+		if !ok {
+			response.Error(c, http.StatusUnauthorized, "Invalid user ID format in context")
+			c.Abort()
+			return
+		}
+
+		// Fetch user model from the database using the correct repository method
+		userModel, err := userRepo.GetByID(userID)
+		if err != nil {
+			response.Error(c, http.StatusForbidden, "User not found or repository error")
+			c.Abort()
+			return
+		}
+
+		// Map the data model to the domain model to check for admin role
+		mapper := user.NewMapper()
+		userDomainModel, err := mapper.ToDomainModel(userModel)
+		if err != nil {
+			response.Error(c, http.StatusInternalServerError, "Could not process user data")
+			c.Abort()
+			return
+		}
+
+		// Check if the user has an admin role
+		if !userDomainModel.IsAdmin() {
 			response.Error(c, http.StatusForbidden, "Admin access required")
 			c.Abort()
 			return

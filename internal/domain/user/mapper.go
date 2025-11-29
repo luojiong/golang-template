@@ -19,7 +19,7 @@ func (m *Mapper) ToDomainModel(userModel *models.User) (*User, error) {
 	}
 
 	// 转换值对象
-	userID, err := NewUserID(userModel.ID)
+	userID, err := NewUserIDFromString(userModel.ID)
 	if err != nil {
 		return nil, err
 	}

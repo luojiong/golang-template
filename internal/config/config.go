@@ -78,8 +78,8 @@ type DatabaseConfig struct {
 	Port     int    `mapstructure:"port"`     // 端口号
 	User     string `mapstructure:"user"`     // 用户名
 	Password string `mapstructure:"password"` // 密码
-	DBName   string `mapstructure:"dbname"`   // 数据库名称
-	SSLMode  string `mapstructure:"sslmode"`  // SSL模式
+	DBName   string `mapstructure:"db_name"`  // 数据库名称
+	SSLMode  string `mapstructure:"ssl_mode"` // SSL模式
 	// 连接池设置
 	MaxOpenConns    int `mapstructure:"max_open_conns"`    // 最大打开连接数
 	MaxIdleConns    int `mapstructure:"max_idle_conns"`    // 最大空闲连接数

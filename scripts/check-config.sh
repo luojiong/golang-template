@@ -50,8 +50,8 @@ if [ -f "configs/development.yaml" ]; then
             echo -e "${BLUE}  - Database host: $DB_HOST${NC}"
         fi
 
-        if grep -q "dbname:" configs/development.yaml; then
-            DB_NAME=$(grep -A5 "database:" configs/development.yaml | grep "dbname:" | awk '{print $2}' | tr -d '"')
+        if grep -q "db_name:" configs/development.yaml; then
+            DB_NAME=$(grep -A5 "database:" configs/development.yaml | grep "db_name:" | awk '{print $2}' | tr -d '"')
             echo -e "${BLUE}  - Database name: $DB_NAME${NC}"
         fi
 

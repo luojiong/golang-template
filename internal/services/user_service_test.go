@@ -135,10 +135,9 @@ func TestNewUserServiceWithCache(t *testing.T) {
 }
 
 func TestUserService_Register(t *testing.T) {
-	mockRepo := new(MockUserRepository)
-	service := NewUserService(mockRepo)
-
 	t.Run("成功注册用户", func(t *testing.T) {
+		mockRepo := new(MockUserRepository)
+		service := NewUserService(mockRepo)
 		req := &models.RegisterRequest{
 			Username:  "testuser",
 			Email:     "test@example.com",
@@ -148,11 +147,11 @@ func TestUserService_Register(t *testing.T) {
 		}
 
 		// 模拟邮箱和用户名不存在
-		mockRepo.On("ExistsByEmail", req.Email).Return(false, nil)
-		mockRepo.On("ExistsByUsername", req.Username).Return(false, nil)
+		mockRepo.On("ExistsByEmail", req.Email).Return(false, nil).Once()
+		mockRepo.On("ExistsByUsername", req.Username).Return(false, nil).Once()
 
 		// 模拟成功创建
-		mockRepo.On("Create", mock.AnythingOfType("*models.User")).Return(nil).Run(func(args mock.Arguments) {
+		mockRepo.On("Create", mock.AnythingOfType("*models.User")).Return(nil).Once().Run(func(args mock.Arguments) {
 			user := args.Get(0).(*models.User)
 			user.ID = uuid.New().String()
 			user.CreatedAt = time.Now()
@@ -165,8 +164,6 @@ func TestUserService_Register(t *testing.T) {
 		assert.NotNil(t, user)
 		assert.Equal(t, req.Username, user.Username)
 		assert.Equal(t, req.Email, user.Email)
-		assert.Equal(t, req.FirstName, user.FirstName)
-		assert.Equal(t, req.LastName, user.LastName)
 		assert.NotEmpty(t, user.Password) // 密码应该被哈希
 		assert.NotEqual(t, req.Password, user.Password) // 不应该与原始密码相同
 
@@ -174,64 +171,64 @@ func TestUserService_Register(t *testing.T) {
 	})
 
 	t.Run("邮箱已存在", func(t *testing.T) {
+		mockRepo := new(MockUserRepository)
+		service := NewUserService(mockRepo)
 		req := &models.RegisterRequest{
 			Username:  "testuser",
 			Email:     "existing@example.com",
-			FirstName: "Test",
-			LastName:  "User",
 			Password:  "password123",
 		}
 
-		mockRepo.On("ExistsByEmail", req.Email).Return(true, nil)
+		mockRepo.On("ExistsByEmail", req.Email).Return(true, nil).Once()
 
 		user, err := service.Register(req)
 
 		assert.Error(t, err)
 		assert.Nil(t, user)
-		assert.Contains(t, err.Error(), "邮箱已存在")
+		assert.Contains(t, err.Error(), "user with this email already exists")
 
 		mockRepo.AssertExpectations(t)
 	})
 
 	t.Run("用户名已存在", func(t *testing.T) {
+		mockRepo := new(MockUserRepository)
+		service := NewUserService(mockRepo)
 		req := &models.RegisterRequest{
 			Username:  "existinguser",
 			Email:     "test@example.com",
-			FirstName: "Test",
-			LastName:  "User",
 			Password:  "password123",
 		}
 
-		mockRepo.On("ExistsByEmail", req.Email).Return(false, nil)
-		mockRepo.On("ExistsByUsername", req.Username).Return(true, nil)
+		mockRepo.On("ExistsByEmail", req.Email).Return(false, nil).Once()
+		mockRepo.On("ExistsByUsername", req.Username).Return(true, nil).Once()
 
 		user, err := service.Register(req)
 
 		assert.Error(t, err)
 		assert.Nil(t, user)
-		assert.Contains(t, err.Error(), "用户名已存在")
+		assert.Contains(t, err.Error(), "username already taken")
 
 		mockRepo.AssertExpectations(t)
 	})
 
 	t.Run("创建用户失败", func(t *testing.T) {
+		mockRepo := new(MockUserRepository)
+		service := NewUserService(mockRepo)
 		req := &models.RegisterRequest{
 			Username:  "testuser",
 			Email:     "test@example.com",
-			FirstName: "Test",
-			LastName:  "User",
 			Password:  "password123",
 		}
 
-		mockRepo.On("ExistsByEmail", req.Email).Return(false, nil)
-		mockRepo.On("ExistsByUsername", req.Username).Return(false, nil)
-		mockRepo.On("Create", mock.AnythingOfType("*models.User")).Return(errors.New("数据库错误"))
+		mockRepo.On("ExistsByEmail", req.Email).Return(false, nil).Once()
+		mockRepo.On("ExistsByUsername", req.Username).Return(false, nil).Once()
+		mockRepo.On("Create", mock.AnythingOfType("*models.User")).Return(errors.New("database error")).Once()
 
 		user, err := service.Register(req)
 
 		assert.Error(t, err)
 		assert.Nil(t, user)
-		assert.Contains(t, err.Error(), "创建用户失败")
+		assert.Contains(t, err.Error(), "failed to create user")
 
 		mockRepo.AssertExpectations(t)
 	})

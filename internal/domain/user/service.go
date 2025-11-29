@@ -2,7 +2,6 @@ package user
 
 import (
 	"fmt"
-	"time"
 
 	customerrors "go-server/internal/errors"
 )
@@ -50,11 +49,8 @@ func (s *DomainService) RegisterUser(
 		})
 	}
 
-	// 生成用户ID（在实际应用中应该使用UUID生成器）
-	userID, err := NewUserID(generateUserID())
-	if err != nil {
-		return nil, customerrors.NewInternalError("failed to generate user ID", err)
-	}
+	// 生成用户ID
+	userID := NewUserID()
 
 	// 创建用户
 	user, err := NewUser(
@@ -142,12 +138,4 @@ func (s *DomainService) ChangeUserPassword(userID UserID, oldPassword, newPasswo
 	// s.eventBus.Publish(UserPasswordChangedEvent{...})
 
 	return nil
-}
-
-// Helper Functions
-
-// generateUserID 生成用户ID（简化版本）
-func generateUserID() string {
-	// 在实际应用中应该使用UUID生成器
-	return fmt.Sprintf("user_%d", time.Now().UnixNano())
 }

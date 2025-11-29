@@ -4,6 +4,8 @@ import (
 	"errors"
 	"regexp"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // UserID 用户ID值对象
@@ -11,10 +13,16 @@ type UserID struct {
 	value string
 }
 
-// NewUserID 创建新的用户ID
-func NewUserID(id string) (UserID, error) {
-	if strings.TrimSpace(id) == "" {
-		return UserID{}, errors.New("user ID cannot be empty")
+// NewUserID 创建新的用户ID（生成新的UUID）
+func NewUserID() UserID {
+	return UserID{value: uuid.New().String()}
+}
+
+// NewUserIDFromString 从字符串创建用户ID
+func NewUserIDFromString(id string) (UserID, error) {
+	id = strings.TrimSpace(id)
+	if _, err := uuid.Parse(id); err != nil {
+		return UserID{}, errors.New("invalid user ID format (must be a UUID)")
 	}
 	return UserID{value: id}, nil
 }
